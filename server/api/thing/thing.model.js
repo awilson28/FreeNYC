@@ -9,9 +9,13 @@ var ThingSchema = new Schema({
   messages: [{
 	  body: String,
 	  date: {type: Date, default: Date.now},
+	  //one to one relationships 
+	  //should denormalize the sender and recipient here 
 	  sender: {type: Schema.Types.ObjectId, ref: 'User'},
 	  recipient: {type: Schema.Types.ObjectId, ref: 'User'}
   }],
+  //conversants will only ever hold two people
+  //should denormalize these two people? 
   conversants: [{type: Schema.Types.ObjectId, ref: 'User'}], 
   numNewMessages: {type: Number, default: 0} 
 });

@@ -93,7 +93,7 @@ exports.adjustNumNewMessages = function(req, res) {
 // Creates a new thing in the DB.
 exports.create = function(req, res) {
   req.body.sender = req.user._id;
-  console.log('REQBODY', req.body)
+  // console.log('REQBODY', req.body)
   User.findById(req.body.recipient, function(err, user){
     var options = {
         from: 'freestorenyc@gmail.com',

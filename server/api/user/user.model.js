@@ -19,8 +19,12 @@ var UserSchema = new Schema({
   wishList: Array,
   ratingArray: Array,
   rating: {type: Number, default: 5},
+  //a one to many relationship - this is the display for posts you've bid on
   currentTransactions: [{type: Schema.Types.ObjectId, ref: 'Post'}],
+  //a one to squillions relationship (potentially... should add functionality so that messages
+    //older than 10 days are deleted to keep it at one to many relationship
   messsages: [{type: Schema.Types.ObjectId, ref: 'Thing'}],
+  //a one to many relationship. also need self-deleting capability 
   alerts: [{type: Schema.Types.ObjectId, ref: 'Post'}],
   numMessages: {type: Number, default: 0},
   hashedPassword: String,
