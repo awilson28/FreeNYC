@@ -35,7 +35,7 @@ exports.show = function(req, res) {
 // Gets a user's received messages
 exports.getMessages = function(req, res) {
   Thing.find({conversants : {$in: [req.user._id]}})
-       .populate('conversants messages.sender', 'name')
+       // .populate('conversants messages.sender', 'name')
        .exec(function (err, things) {
           if(err) { return handleError(res, err); }
           if(!things) { return res.send(404); }
@@ -61,7 +61,8 @@ exports.communicate = function(req, res) {
   Thing.findByIdAndUpdate(req.params.id, {$push: {messages: req.body}}, function (err, thing) {
     if(err) { return handleError(res, err); }
     if(!thing) { return res.send(404); }
-    thing.setNumMessages(req.body.recipient._id, true, function(thing){
+    //req.body.recipient._id
+    thing.setNumMessages(req.body.recipient, true, function(thing){
       return res.json(thing);   
     })
   });
