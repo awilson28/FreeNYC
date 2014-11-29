@@ -35,10 +35,11 @@ exports.show = function(req, res) {
 // Gets a user's received messages
 exports.getMessages = function(req, res) {
   Thing.find({conversants : {$in: [req.user._id]}})
-       // .populate('conversants messages.sender', 'name')
+       .populate('conversants messages.sender messages.recipient', 'name')
        .exec(function (err, things) {
           if(err) { return handleError(res, err); }
           if(!things) { return res.send(404); }
+          console.log('message body', things)
           return res.json(things);
         });
 };
@@ -57,12 +58,16 @@ exports.getMessages = function(req, res) {
 exports.communicate = function(req, res) {
   //req.params.id indicates the id of the person receiving the message
   console.log('body', req.body)
-  console.log('in here communicate')
-  Thing.findByIdAndUpdate(req.params.id, {$push: {messages: req.body}}, function (err, thing) {
+  req.body.sender = req.body.sender._id; 
+  req.body.recipient = req.body.recipient._id; 
+  console.log('body after', req.body)
+  // console.log('in here communicate')
+  Thing.findByIdAndUpdate(req.params.id, {$push: {messages: req.body}}, function(err, thing){
     if(err) { return handleError(res, err); }
     if(!thing) { return res.send(404); }
-    //req.body.recipient._id
+    console.log('saved thing', thing)
     thing.setNumMessages(req.body.recipient, true, function(thing){
+      console.log('sent thing', thing)
       return res.json(thing);   
     })
   });
@@ -71,7 +76,10 @@ exports.communicate = function(req, res) {
 //decrement new message count
 exports.adjustNumNewMessages = function(req, res) {
   //req.params.id indicates the id of the person receiving the message
-  Thing.findById(req.params.talkId, function (err, thing) {
+  Thing.findById(req.params.talkId)
+    .populate('conversants messages.sender messages.recipient', 'name')
+    .exec(function (err, thing) {
+      console.log('thing', thing, 'rec', thing.messages.recipient, 'sender', thing.messages.sender)
     thing.setNumMessages(req.user._id, false, function(thing){
       if(err) { return handleError(res, err); }
       if(!thing) { return res.send(404); }

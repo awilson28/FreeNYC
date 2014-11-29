@@ -5,7 +5,9 @@ angular.module('freeNycApp')
     
     var vm = this;
     $scope.newMessage = {
-    	body: ""
+    	body: "",
+        sender: {}, 
+        recipient: {}
     }; 
     $scope.showMe = {};
     $scope.userId = Auth.getCurrentUser()._id;
@@ -15,12 +17,14 @@ angular.module('freeNycApp')
     //gets all messages for the signed in user
     messageService.getMyMessages(function(data) {
 		$scope.communication = data;
-        console.log('data', $scope.communication)
+        // console.log('data', $scope.communication)
         for (var i = 0; i < $scope.communication.length; i++) {
             var temp = $scope.communication[i].conversants;
+            // console.log('temp', temp, 'conversants: ', $scope.communication[i])
             for (var j = 0; j < temp.length; j++) {
-                if(temp[j]._id !== $scope.userId) {
+                if (temp[j]._id !== $scope.userId) {
                    $scope.communication[i].conversants = temp[j];
+                   // console.log('conversants', $scope.communication[i].conversants)
                 }
             };
         };
@@ -33,16 +37,20 @@ angular.module('freeNycApp')
 
     //click event that adds user's response to the messages array in the communication
     vm.reply = function(convoId, index, parentIndex){
+        console.log('parameters: ', convoId, index, parentIndex)
         console.log('index', $scope.communication[parentIndex].messages[index])
-        if ($scope.userId === $scope.communication[parentIndex].messages[index].recipient) {
-            $scope.newMessage.sender = $scope.userId; 
-            $scope.newMessage.recipient = $scope.communication[parentIndex].messages[index].sender
+        if ($scope.userId === $scope.communication[parentIndex].messages[index].recipient._id) {
+
+            $scope.newMessage.sender._id = $scope.userId; 
+            $scope.newMessage.recipient._id = $scope.communication[parentIndex].messages[index].sender._id
+            $scope.newMessage.recipient.name = $scope.communication[parentIndex].messages[index].sender.name
         }
-        else if ($scope.userId === $scope.communication[parentIndex].messages[index].sender) {
-            $scope.newMessage.recipient = $scope.userId; 
-            $scope.newMessage.sender = $scope.communication[parentIndex].messages[index].recipient
+        else if ($scope.userId === $scope.communication[parentIndex].messages[index].sender._id) {
+            $scope.newMessage.recipient._id = $scope.userId; 
+            $scope.newMessage.sender._id = $scope.communication[parentIndex].messages[index].recipient._id
+            $scope.newMessage.sender.name = $scope.communication[parentIndex].messages[index].recipient.name
         }
-        console.log('new message', $scope.newMessage)
+        console.log('second new message', $scope.newMessage)
     	messageService.replyToMessage(convoId, $scope.newMessage, function(result){
             $scope.showMe[parentIndex][index] = false;
     	})
