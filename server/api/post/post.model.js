@@ -22,8 +22,11 @@ var PostSchema = new Schema({
   coordinates: [Number, Number],
   img: Array,
   ratingsEnabled: Boolean,
+  //the only one-to-many relationship on the schema... potentially (with wishlist capability)
+  //a one-to-squillions relationship
   bids: [{type: Schema.Types.ObjectId, ref: 'User'}], 
   date: {type: Date, default: Date.now},
+  //this is a one-to-one relationship. 
   inTransactionWith: [{type: Schema.Types.ObjectId, ref: 'User'}],
   user: {type: Schema.Types.ObjectId, ref: 'User'}
 });

@@ -13,6 +13,11 @@ angular.module('freeNycApp')
         $http.put('api/things/reply/' + id, messageBody).success(callback);
       };
 
+      this.Communicators = {
+        sender: '', 
+        recipient: ''
+      }
+
       this.sendMessage = function(message, callback) {
         $http.post('api/things/', message).success(callback);
       };
